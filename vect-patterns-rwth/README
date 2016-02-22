@@ -1,0 +1,14 @@
+Advanced Vectorization Examples
+===============================
+
+This repository contains a number of examples that use advanced vectorization.
+These are examples of programs that need some degree of trickery to work.
+Each example consists of a README file, a Makefile and the source code.
+
+* inner_loop_reduce
+    showcases ways to resolve conflicts among lanes, where we have to reduce into a variable memory location.
+* fill_lanes 
+    transforms an inner loop in a vectorized algorithm in such a way that the body gets executed with as many lanes as possible.
+
+Generally speaking, these examples will only work with an up-to-date Intel compiler.
+Their effect is best shown on a Xeon Phi.

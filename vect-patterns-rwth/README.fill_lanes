@@ -1,0 +1,53 @@
+Vectorization Example: Fill Lanes
+=================================
+
+Consider a program, where we have to vectorize a loop that contains another, inner loop.
+That inner loop iterates over different pieces of data, and contains a "continue" statement halfway through.
+This "continue" statement guards the execution of a very expensive function.
+
+Vectorizing this loop conventionally leads to code that executes that expensive function frequently, and most of the times with incomplete masks, i.e. we waste some "space" in our SIMD unit.
+
+Instead, it is possible to only execute that expensive function once we have filled our vector registers to the max:
+We do not execute the inner for loop in lock-step anymore, but allow different lanes to proceed independently from each other.
+
+To implement this, we have to figure out if any lane has executed continue, and we have to figure out if all loops are ready to execute a function.
+This means that we need reductions on masks among the lanes.
+The current compiler does not seem to support that.
+
+We present a number of work-arounds (of various effectiveness).
+One relies on non-vectorized functions and global variables (fill-temp), another on vector_variant functions (fill-direct), another on masked stores and global variables (fill-store, defunct), and the last one is an explicitly vectorized code using intrinsics (fill-intr, only Phi).
+
+Measurements
+============
+
+Note: none is the non-vectorized version, simd the trivially vectorized version, fill-* are attempts at filling the lanes.
+Only the intrinsic filling achieves a speedup.
+All versions are correct (i.e. the first correctness parameter is < 1e-5, the second correctness parameter approx -5.99130).
+
+          none.x-mic: Time   : 3.723747200000000e+08
+          none.x-mic: Correct: 3.066983936150791e-06
+          none.x-mic: Correct: -5.991305351257324e+00
+          simd.x-mic: Time   : 1.661247360000000e+08
+          simd.x-mic: Correct: 3.066983936150791e-06
+          simd.x-mic: Correct: -5.991305351257324e+00
+   fill-direct.x-mic: Time   : 4.607440000000000e+08
+   fill-direct.x-mic: Correct: 3.066983936150791e-06
+   fill-direct.x-mic: Correct: -5.991305351257324e+00
+     fill-temp.x-mic: Time   : 6.023345280000000e+08
+     fill-temp.x-mic: Correct: 3.066983936150791e-06
+     fill-temp.x-mic: Correct: -5.991305351257324e+00
+     fill-intr.x-mic: Time   : 3.659471200000000e+07
+     fill-intr.x-mic: Correct: 4.884550889983075e-06
+     fill-intr.x-mic: Correct: -5.991304397583008e+00
+         none.x-host: Time   : 7.618968800000000e+07
+         none.x-host: Correct: 3.066983936150791e-06
+         none.x-host: Correct: -5.991305351257324e+00
+         simd.x-host: Time   : 8.071620000000000e+07
+         simd.x-host: Correct: 3.066983936150791e-06
+         simd.x-host: Correct: -5.991305351257324e+00
+  fill-direct.x-host: Time   : 1.553101760000000e+08
+  fill-direct.x-host: Correct: 3.066983936150791e-06
+  fill-direct.x-host: Correct: -5.991305351257324e+00
+    fill-temp.x-host: Time   : 2.124863200000000e+08
+    fill-temp.x-host: Correct: 3.066983936150791e-06
+    fill-temp.x-host: Correct: -5.991305351257324e+00

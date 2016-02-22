@@ -1,0 +1,36 @@
+Vectorization Example: Inner Loop Reduce
+========================================
+
+Consider an example where we vectorize an outer loop, and a inner loop is iterated through.
+We need to accumulate a value within to a memory location dependent on variables in the inner loop.
+The simd pragma can specify a reduction clause for arrays.
+However, this means that the array will be augmented with another dimension of size <vector length>, and the code below the pragma will just add into that.
+The reduction happens only in the end.
+This may actually be desireable behaviour if we often accumulate into relatively few distinct memory locations.
+It however is unsuited if we accumulate only a few times per memory location, if we are constrained in terms of memory usage, or if we need to allocate on the heap.
+
+The mitigation strategies herein circle around the idea to "hide" code from the compiler in function calls.
+These function calls have to be serialized by the compiler, and we get the desired behaviour.
+Note that it is crucial to annotate the function (memory_reduce_add) with __declspec(noinline).
+If inlined, it will not work: The code will compute invalid results.
+As another additional step, we can make use of the vector_variant annotation, and perform the reduction using compiler intrinsics.
+
+Measurement
+===========
+
+Note: none has no pragma-based vectorization, simd is explicitly vectorized, and vector_variant uses vector_variant-declarations additionally.
+It is clear that performance benefits on both the Phi and the Host.
+
+           none.x-mic: Time   : 3.473042000000000e+06
+           none.x-mic: Correct: 4.835128784179688e-04
+           simd.x-mic: Time   : 1.219468000000000e+06
+           simd.x-mic: Correct: 1.049041748046875e-04
+ vector_variant.x-mic: Time   : 3.594990000000000e+05
+ vector_variant.x-mic: Correct: 3.814697265625000e-05
+          none.x-host: Time   : 1.234876000000000e+06
+          none.x-host: Correct: 4.835128784179688e-04
+          simd.x-host: Time   : 4.378800000000000e+05
+          simd.x-host: Correct: 3.433227539062500e-05
+vector_variant.x-host: Time   : 2.689560000000000e+05
+vector_variant.x-host: Correct: -6.866455078125000e-05
+

@@ -1,0 +1,14 @@
+all: inner_loop_reduce.none.x-mic inner_loop_reduce.none.x-host inner_loop_reduce.simd.x-mic inner_loop_reduce.simd.x-host inner_loop_reduce.vector_variant.x-mic inner_loop_reduce.vector_variant.x-host
+CC=icc -O3 -std=c99 -w2 -qopt-report=5 -wd10397 -wd10382
+inner_loop_reduce.none.x-mic: inner_loop_reduce.c
+	$(CC) -o$@ -mmic inner_loop_reduce.c
+inner_loop_reduce.none.x-host: inner_loop_reduce.c
+	$(CC) -o$@ -xHost inner_loop_reduce.c
+inner_loop_reduce.simd.x-mic: inner_loop_reduce.c
+	$(CC) -o$@ -mmic inner_loop_reduce.c -DSIMD -DSIMD_CORRECT
+inner_loop_reduce.simd.x-host: inner_loop_reduce.c
+	$(CC) -o$@ -xHost inner_loop_reduce.c -DSIMD -DSIMD_CORRECT
+inner_loop_reduce.vector_variant.x-mic: inner_loop_reduce.c
+	$(CC) -o$@ -mmic inner_loop_reduce.c -DSIMD -DSIMD_CORRECT -DVECTOR_VARIANT
+inner_loop_reduce.vector_variant.x-host: inner_loop_reduce.c
+	$(CC) -o$@ -xHost inner_loop_reduce.c -DSIMD -DSIMD_CORRECT -DVECTOR_VARIANT

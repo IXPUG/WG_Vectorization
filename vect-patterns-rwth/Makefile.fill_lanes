@@ -1,0 +1,30 @@
+all: fill_lanes.none.x-mic fill_lanes.none.x-host fill_lanes.simd.x-mic fill_lanes.simd.x-host fill_lanes.fill-temp.x-mic fill_lanes.fill-temp.x-host fill_lanes.fill-direct.x-mic fill_lanes.fill-direct.x-host fill_lanes.fill-intr.x-mic
+CC=icc -O3 -std=c99 -w2 -qopt-report=5 -wd10397 -wd10382
+fill_lanes.none.x-mic: fill_lanes.c
+	$(CC) -o$@ -mmic fill_lanes.c
+fill_lanes.none.x-host: fill_lanes.c
+	$(CC) -o$@ -xHost fill_lanes.c
+fill_lanes.simd.x-mic: fill_lanes.c
+	$(CC) -o$@ -mmic fill_lanes.c -DSIMD -DSIMD_CORRECT
+fill_lanes.simd.x-host: fill_lanes.c
+	$(CC) -o$@ -xHost fill_lanes.c -DSIMD -DSIMD_CORRECT
+fill_lanes.fill-temp.x-mic: fill_lanes.c
+	$(CC) -o$@ -mmic fill_lanes.c -DSIMD -DSIMD_CORRECT \
+            -DFILL -DFILL_TEMP
+fill_lanes.fill-temp.x-host: fill_lanes.c
+	$(CC) -o$@ -xHost fill_lanes.c -DSIMD -DSIMD_CORRECT \
+            -DFILL -DFILL_TEMP
+#fill_lanes.fill-store.x-mic: fill_lanes.c
+#	$(CC) -o$@ -mmic fill_lanes.c -DSIMD -DSIMD_CORRECT \
+#            -DFILL -DFILL_STORE
+#fill_lanes.fill-store.x-host: fill_lanes.c
+#	$(CC) -o$@ -xHost fill_lanes.c -DSIMD -DSIMD_CORRECT \
+#            -DFILL -DFILL_STORE
+fill_lanes.fill-direct.x-mic: fill_lanes.c
+	$(CC) -o$@ -mmic fill_lanes.c -DSIMD -DSIMD_CORRECT \
+            -DFILL -DFILL_DIRECT -DVECTOR_VARIANT
+fill_lanes.fill-direct.x-host: fill_lanes.c
+	$(CC) -o$@ -xHost fill_lanes.c -DSIMD -DSIMD_CORRECT \
+            -DFILL -DFILL_DIRECT -DVECTOR_VARIANT
+fill_lanes.fill-intr.x-mic: fill_lanes.c
+	$(CC) -o$@ -mmic fill_lanes.c -DFILL_INTR_PHI
