@@ -1,0 +1,56 @@
+Introduction
+============
+
+A deeper exploration of the fill_lanes example, based on suggestions at the IXPUG vectorization WG meeting on 22.2.15.
+We implement five variants:
+
+* scalar
+* naive SIMD
+* collect work, then compute
+* chunk manually, use Cilk for cross-lane reduction
+* intrinsics (only single precision MIC implemented)
+
+To compile: $CC -O3 (-xHost|-mmic) -std=c99 *.c
+
+The program will for each variant output timing (in cycles) and correctness values (elements from the force array) that should match across implementations.
+It is possible to switch between single and double precision by changing common.h.
+
+Timings
+=======
+
+Xeon Phi 5110P, single
+              scalar: time 9.20306e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+               naive: time 3.62217e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+     collect_compute: time 4.79762e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+             chunked: time 2.19558e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+                intr: time 1.28593e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+
+Xeon Phi 5110P, double
+              scalar: time 1.31253e+06 f[0] -1.89332e+01 f[16] 4.00240e+00
+               naive: time 5.11049e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+     collect_compute: time 6.24026e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+             chunked: time 6.01524e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+
+Sandy Bridge E5, single
+              scalar: time 2.57992e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+               naive: time 2.40748e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+     collect_compute: time 2.25752e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+             chunked: time 2.12164e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+
+Sandy Bridge E5, double
+              scalar: time 3.00460e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+               naive: time 3.29852e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+     collect_compute: time 2.96520e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+             chunked: time 3.17944e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+
+Haswell i7, single
+              scalar: time 1.59426e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+               naive: time 1.41527e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+     collect_compute: time 1.11401e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+             chunked: time 1.36513e+05 f[0] -1.89332e+01 f[16] 4.00241e+00
+
+Haswell i7, double
+              scalar: time 1.88653e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+               naive: time 1.84784e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+     collect_compute: time 2.07652e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
+             chunked: time 2.20376e+05 f[0] -1.89332e+01 f[16] 4.00240e+00
