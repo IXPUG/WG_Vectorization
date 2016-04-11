@@ -15,6 +15,18 @@ To compile: $CC -O3 (-xHost|-mmic) -std=c99 *.c
 The program will for each variant output timing (in cycles) and correctness values (elements from the force array) that should match across implementations.
 It is possible to switch between single and double precision by changing common.h.
 
+Timings w/ new timing methodology: min-of-repeat-run
+====================================================
+
+Xeon Phi 5110P, single
+              scalar: time 2.91731e+08 f[0] 1.35583e-03 f[16] -3.47786e+04
+               naive: time 1.33509e+08 f[0] 1.35583e-03 f[16] -3.47786e+04
+     collect_compute: time 1.42242e+08 f[0] 1.35583e-03 f[16] -3.47786e+04
+             chunked: time 7.02832e+07 f[0] 1.35583e-03 f[16] -3.47786e+04
+          linearised: time 2.35176e+08 f[0] 1.35583e-03 f[16] -3.47785e+04
+                intr: time 4.09805e+07 f[0] 1.35583e-03 f[16] -3.47786e+04
+
+
 Timings
 =======
 

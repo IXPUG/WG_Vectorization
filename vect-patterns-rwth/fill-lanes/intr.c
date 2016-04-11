@@ -1,6 +1,6 @@
 #include<immintrin.h>
 __declspec(noinline)
-void fill_lanes_intr(int N, int * iarr, int * jarr, int * marr, int * base, int * offs, float * x, float * f, float rsq) {
+void fill_lanes_intr(int N, int * iarr, int * jarr, int * marr, int * base, int * offs, float * x, float * f, float rsq, void * data) {
     float tmpf[16] __attribute__((aligned(64)));
     int tmpi[16] __attribute__((aligned(64)));
     __m512 rsqb = _mm512_set1_ps(rsq);

@@ -1,7 +1,7 @@
 #include "common.h"
 #include<stdbool.h>
 
-void fill_lanes_chunked(int N, int * iarr, int * jarr, int * marr, int * base, int * offs, real * x, real * f, real rsq) {
+void fill_lanes_chunked(int N, int * iarr, int * jarr, int * marr, int * base, int * offs, real * x, real * f, real rsq, void * data) {
     int i[VL], j[VL], M[VL];
     int off[VL], k[VL], kk[VL];
     real xi[VL], xj[VL], xk[VL], dxij[VL], dxik[VL];

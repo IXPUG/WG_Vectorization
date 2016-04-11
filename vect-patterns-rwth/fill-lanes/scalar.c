@@ -3,7 +3,7 @@
 void
 fill_lanes_scalar
 (int N, int * iarr, int * jarr, int * marr, int * base, int * offs, 
- real * x, real * f, real rsq) {
+ real * x, real * f, real rsq, void * data) {
     for (int idx = 0; idx < N; idx++) {
         const int i = iarr[idx];
         const int j = jarr[idx];

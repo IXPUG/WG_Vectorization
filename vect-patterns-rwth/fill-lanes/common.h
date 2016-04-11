@@ -5,7 +5,11 @@ typedef float real;
 #define cosr cosf
 #define sinr sinf
 #define sqrtr sqrtf
+#if defined(__MIC__) || defined(__AVX512F__)
 #define VL 16
+#else
+#define VL 8
+#endif
 #define MODE_SINGLE
 #else
 typedef double real;
@@ -13,9 +17,14 @@ typedef double real;
 #define cosr cos
 #define sinr sin
 #define sqrtr sqrt
+#if defined(__MIC__) || defined(__AVX512F__)
 #define VL 8
+#else
+#define VL 4
+#endif
 #define MODE_DOUBLE
 #endif
+#pragma omp declare simd
 __declspec(vector)
 inline void compute_f(real dij, real dik, real *fi, real *fj, real *fk) {
     dij *= 10;

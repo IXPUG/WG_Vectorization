@@ -8,7 +8,7 @@ static void memory_reduce_add(real *dest, real src) {
 void
 fill_lanes_collect_compute
 (int N, int * iarr, int * jarr, int * marr, int * base, int * offs, 
- real * x, real * f, real rsq) {
+ real * x, real * f, real rsq, void * data) {
     __assume_aligned(iarr, 64);
     __assume_aligned(jarr, 64);
     #pragma simd
