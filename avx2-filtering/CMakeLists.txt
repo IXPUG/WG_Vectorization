@@ -22,8 +22,20 @@ add_executable(avx2mask src/avx2filter.cc)
 add_executable(avx2filter src/avx2filter.cc)
 target_compile_definitions(avx2filter PUBLIC -DSORT_SIMD_LANES)
 
+add_executable(avx2filter_perm src/avx2filter.cc)
+target_compile_definitions(avx2filter_perm PUBLIC -DSORT_SIMD_LANES -DPERMVAR)
+
 add_executable(avx2filterv src/avx2filter.cc)
 target_compile_definitions(avx2filterv PUBLIC -DSORT_SIMD_LANES -DVERBOSE)
+
+add_executable(avx2filterv_perm src/avx2filter.cc)
+target_compile_definitions(avx2filterv_perm PUBLIC -DSORT_SIMD_LANES -DVERBOSE -DPERMVAR)
+
+add_executable(avx2sortbench src/bench.cc)
+target_compile_definitions(avx2sortbench PUBLIC)
+
+add_executable(avx2sortbench_perm src/bench.cc)
+target_compile_definitions(avx2sortbench_perm PUBLIC -DPERMVAR)
 
 enable_testing()
 

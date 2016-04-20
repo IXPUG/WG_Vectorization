@@ -9,6 +9,9 @@
 
 #include "timer.h"
 
+#include "sort_permvar.h"
+#include "sort_net.h"
+
 void _mm_print(const __m256d x, const uint8_t mask, size_t i, const char *str)
 {
 #ifdef VERBOSE
@@ -25,18 +28,14 @@ void _mm_print(const __m256d x, const uint8_t mask, size_t i, const char *str)
  * mask, and are moved towards lower part of the vector. The variable shtab is
  * a true/false table of which shuffles to perform on mm in order to sort active
  * and inactive lanes.
+ * Selection logic here, implementations in sort_{permvar,net}.h
  */
 
-void _mm_sort_pd(__m256d& mm, const uint8_t& mask)
-{
-    const uint64_t shtab = 0x311269308410200;
-    uint8_t code = (uint8_t)((shtab >> 4*mask) & 0x0f);
-    if (code == 0) return;
-    if (code & 1) mm = _mm256_permute4x64_pd(mm, 0x4e);
-    if (code & 2) mm = _mm256_permute4x64_pd(mm, 0xb1);
-    if (code & 4) mm = _mm256_permute4x64_pd(mm, 0xd8);
-    if (code & 8) mm = _mm256_permute4x64_pd(mm, 0x39);
-}
+#ifdef PERMVAR
+#define _mm_sort_pd _mm_sort_permvar_pd
+#else
+#define _mm_sort_pd _mm_sort_net_pd
+#endif
 
 /*
  * Base test is: apply f(x) for numbers with mask == 0, and g(x) to numbers for
