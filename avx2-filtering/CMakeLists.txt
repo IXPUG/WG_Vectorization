@@ -39,8 +39,9 @@ target_compile_definitions(avx2sortbench_perm PUBLIC -DPERMVAR)
 
 enable_testing()
 
-add_test(Masking   avx2mask   33554432 -1.0 1.0 0.0)
-add_test(Filtering avx2filter 33554432 -1.0 1.0 0.0)
+add_test(Masking    avx2mask   33554432 -1.0 1.0 0.0)
+add_test(FilterSort avx2filter 33554432 -1.0 1.0 0.0)
+add_test(FilterPerm avx2filter_perm 33554432 -1.0 1.0 0.0)
 
 add_test(Example avx2filterv 64 -1.0 1.0 0.0)
 
